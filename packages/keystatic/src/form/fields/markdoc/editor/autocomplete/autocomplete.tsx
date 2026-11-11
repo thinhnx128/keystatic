@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { usePreventScroll } from 'react-aria/usePreventScroll';
 
 import { EditorPopover } from '@keystar/ui/editor';
 
@@ -15,6 +16,7 @@ export function EditorAutocomplete<Item extends object>(
 ) {
   const viewRef = useEditorViewRef();
   const referenceElement = useEditorReferenceElement(props.from, props.to);
+  usePreventScroll({ isDisabled: !referenceElement });
   const listenerRef = useMemo(() => {
     return {
       get current() {
@@ -25,7 +27,11 @@ export function EditorAutocomplete<Item extends object>(
   const { keydownListener, listbox } = useEditorListbox({
     listenerRef,
     ...props,
-    UNSAFE_style: { width: 320, ...props.UNSAFE_style },
+    UNSAFE_style: {
+      width: 320,
+      overscrollBehavior: 'contain',
+      ...props.UNSAFE_style,
+    },
   });
   useEditorKeydownListener(event => {
     keydownListener(event);

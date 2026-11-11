@@ -4,6 +4,7 @@ import { ReactEditor } from 'slate-react';
 import { matchSorter } from 'match-sorter';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import { useOverlayTrigger } from 'react-aria/useOverlayTrigger';
+import { usePreventScroll } from 'react-aria/usePreventScroll';
 import { useListState } from 'react-stately/useListState';
 import { useOverlayTriggerState } from 'react-stately/useOverlayTriggerState';
 
@@ -236,6 +237,7 @@ export function InsertMenu({
   }, [editor]);
   const triggerRef = useRef<HTMLSpanElement>(null);
   const overlayState = useOverlayTriggerState({ isOpen: true });
+  usePreventScroll({ isDisabled: !overlayState.isOpen });
   const {
     triggerProps: { onPress, ...triggerProps },
     overlayProps,
@@ -290,7 +292,11 @@ export function InsertMenu({
         triggerRef={triggerRef}
       >
         <div
-          className={css({ overflow: 'scroll', maxHeight: 300 })}
+          className={css({
+            overflow: 'scroll',
+            maxHeight: 300,
+            overscrollBehavior: 'contain',
+          })}
           ref={scrollableRef}
         >
           <ListBoxBase
